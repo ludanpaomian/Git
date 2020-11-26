@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品信息列表</title>
+
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="js/bootstrap.min.css"/>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $.ajax({
+                url: "list",
+                type: "get",
+                success: function (list) {
+                    $.each(list, function (index, product) {
+                        $('#tab').append(
+                            "<tr>" +
+                            "<td>" + product.id + "</td>" +
+                            "<td>" + product.name + "</td>" +
+                            "<td>" + product.des + "</td>" +
+                            "<td>" + product.price + "</td>" +
+                            "</tr>"
+                        )
+                    })
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="container">
+    <form action="post">
+        <table id="tab" class="table table-bordered table-striped table-hover">
+            <tr>
+                <td>商品编码</td>
+                <td>商品名称</td>
+                <td>商品描述</td>
+                <td>商品价格</td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>

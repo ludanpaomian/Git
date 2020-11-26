@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="js/jquery-1.12.4.min.js"></script>
+<link rel="stylesheet" href="js/bootstrap.min.css"/>
+<script src="js/bootstrap.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>书籍管理系统</title>
+    <script>
+        $(function () {
+            //绑定添加按钮
+            $('#addbtn').on('click', function () {
+                //将adduser.html加载到id为loadmodal的div中
+                $('#submodal').load('insert.html', function () {
+                    //选中模式对话框并显示出来，hide就是隐藏
+                    $('#addmodal').modal('show');
+                    $('#Adduserbtn').on('click', function () {
+                        var paramadd = $('#f3').serialize();
+                        //alert(paramadd);
+                        $.ajax({
+                            url: 'add',
+                            type: 'post',
+                            data: paramadd,
+                            success: function (vo) {
+                                if (vo != 500) {
+                                    alert("添加成功！");
+                                    window.location.reload();
+
+                                } else {
+                                    alert("添加失败！")
+                                    window.location.replace("add.html");
+                                }
+                            }
+                        })
+                    });
+                });
+            });
+        })
+
+        $(function () {
+            $.ajax({
+                url: "list",
+                type: "get",
+                success: function (list) {
+                    $.each(list, function (index, books) {
+                        $('#tab').append(
+                            "<tr>" +
+                            "<td>" + books.id + "</td>" +
+                            "<td>" + books.name + "</td>" +
+                            "<td>" + books.author + "</td>" +
+                            "<td>" + books.price + "</td>" +
+                            "<td><a href='' class='a'>删除</a></td>" +
+                            "<td><input type='checkbox' name='chk' value='" + books.id + "'></td>" +
+                            "</tr>"
+                        )
+                    });
+                    //绑定删除按钮
+                    $('a').on('click', function () {
+                        var id = $(this).closest("tr").children().first().text();
+                        var $tr = $(this).closest("tr");
+                        alert(id);
+                        $.ajax({
+                            url: 'delete',
+                            type: 'post',
+                            data: {'id': id},
+                            success: function (vo) {
+                                if (vo.code != 500) {
+                                    $tr.remove();
+                                } else {
+                                    alert(vo.message);
+                                }
+                            }
+                        })
+                    });
+
+                    $('#btn_del').on('click', function () {
+                        var param = $('#f1').serialize();
+                        if (param == "") {
+                            alert("至少选择一条记录！");
+                            return false;
+                        }
+                        var msg = window.confirm('是否要删除所选记录？');
+                        if (!msg) {
+                            return false;
+                        }
+                        $.ajax({
+                            url: 'delBatch',
+                            type: 'post',
+                            data: param,
+                            success: function (vo) {
+                                if (vo.code = 200) {
+                                    $("input:checked").closest("tr").remove();
+                                } else {
+                                    alert(vo.message);
+                                }
+                            }
+                        })
+                    });
+                }
+            })
+        })
+
+        $(function () {
+            //绑定修改按钮
+            $('#updatebtn').on('click', function () {
+                //将update.html加载到id为loadmodal的div中
+                $('#submodal').load('update.html', function () {
+                    //选中模式对话框并显示出来，hide就是隐藏
+                    $('#updatemodal').modal('show');
+                    $('#Updateproductbtn').on('click', function () {
+                        var paramupdate = $('#f2').serialize();
+                        $.ajax({
+                            url: 'update',
+                            type: 'post',
+                            data: paramupdate,
+                            success: function (vo) {
+                                if (vo != 500) {
+                                    alert("修改成功！");
+                                    window.location.reload();
+
+                                } else {
+                                    alert("修改失败！")
+                                    window.location.replace("add.html");
+                                }
+                            }
+                        })
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <form id="f1">
+        <div class="form-group">
+            <button id="addbtn" type="button" class="btn btn-primary">添加</button>
+            <button id="updatebtn" type="button" class="btn btn-primary">修改</button>
+            <input type="button" id="btn_del" value="删除" class="btn btn-warning">
+        </div>
+
+        <table id="tab" class="table table-bordered table-striped table-hover">
+            <tr>
+                <th>书籍编号</th>
+                <th>书籍名称</th>
+                <th>书籍作者</th>
+                <th>商品价格</th>
+                <th>点击删除</th>
+                <th>批量删除</th>
+            </tr>
+        </table>
+    </form>
+    <!-- 加载模态框的div -->
+    <div id="submodal"></div>
+</div>
+</body>
+</html>

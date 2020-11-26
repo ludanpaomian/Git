@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查询列表</title>
+
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="js/bootstrap.min.css"/>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            /*  //绑定查询按钮
+              $('#query').on('click', function () {
+                  var paramquery = $('#f1').serialize();
+                  alert("这");
+                  $.ajax({
+                      url: 'query',
+                      type: 'post',
+                      data: paramquery,
+                      success: function (vo) {
+                          if (vo != 500) {
+                              alert("查询成功！");
+                              window.location.reload();
+                          } else {
+                              alert("查询失败！")
+                              window.location.replace("add.html");
+                          }
+                      }
+                  });
+              });*/
+
+            $('#query').on('click', function () {
+                var paramquery = $('#f1').serialize();
+                $.ajax({
+                    url: "list1",
+                    type: "get",
+                    data: paramquery,
+                    success: function (list1) {
+                        $.each(list1, function (index, product) {
+                            $('#tab').append(
+                                "<tr>" +
+                                "<td>" + product.id + "</td>" +
+                                "<td>" + product.name + "</td>" +
+                                "<td>" + product.des + "</td>" +
+                                "<td>" + product.price + "</td>" +
+                                "</tr>"
+                            )
+                        })
+                    }
+                })
+            });
+        })
+    </script>
+</head>
+<body>
+<div class="container">
+    <form action="" id="f1">
+        <div class="form-group">
+            <label for="userIdLabel">商品id</label>
+            <input type="input" class="form-control" id="id" name="id" placeholder="请输入用户id">
+        </div>
+        <div class="form-group">
+            <label for="userIdLabel">商品name</label>
+            <input type="input" class="form-control" id="name" name="name" placeholder="请输入用户id">
+        </div>
+        <button type="button" class="btn btn-primary" id="query">查询</button>
+    </form>
+
+    <table id="tab" class="table table-bordered table-striped table-hover">
+        <tr>
+            <td>商品编码</td>
+            <td>商品名称</td>
+            <td>商品描述</td>
+            <td>商品价格</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

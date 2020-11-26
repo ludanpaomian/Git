@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nf.demo.dao.BooksDao">
+    <resultMap id="booksMap" type="edu.nf.demo.entity.Books">
+        <!--主键映射，property指定尸体的字段名，column指定为表的列名-->
+        <id property="id" column="BookId"></id>
+        <!--映射其他的字段,其他字段都使用result标签来映射-->
+        <result property="name" column="BookName"></result>
+        <result property="author" column="BookAuthor"></result>
+        <result property="price" column="BookPrice"></result>
+    </resultMap>
+
+    <!--添加-->
+    <insert id="add" parameterType="books">
+        insert into Books(BookName,BookAuthor,BookPrice) values(#{name},#{author},#{price})
+    </insert>
+
+    <!-- 修改-->
+    <update id="update" parameterType="books">
+        update Books set BookName= #{name},BookAuthor=#{author},BookPrice=#{price} where BookId =#{id}
+    </update>
+
+    <!--删除单个-->
+    <delete id="delete" parameterType="int">
+        delete from Books where BookId =#{id}
+    </delete>
+
+    <!-- 批量删除-->
+    <delete id="delBatch" parameterType="collection">
+        delete from Books where BookId in
+        <foreach collection="array" item="ids" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <!--查询全部-->
+    <select id="listBooks" resultMap="booksMap">
+        select BookId,BookName,BookAuthor,BookPrice from books
+    </select>
+
+    <!--动态查询-->
+    <select id="someBooks" resultType="edu.nf.demo.entity.Books" resultMap="booksMap">
+        select BookId,BookName,BookAuthor,BookPrice from books
+        <choose>
+            <when test="name !=null and name !=''">
+                where BookName=#{name}
+            </when>
+            <when test="id !=null">
+                where BookId=#{id}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+    </select>
+</mapper>
